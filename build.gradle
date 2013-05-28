@@ -1,3 +1,15 @@
+ buildscript {
+   repositories {
+     mavenCentral()
+     maven {
+            url "http://repository-monochromeroad.forge.cloudbees.com/release/"
+     }
+     dependencies {
+       classpath "com.monochromeroad.gradle:gradle-aws-s3-sync:0.4"
+     }
+   }
+}
+
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 
@@ -24,3 +36,20 @@ publishing {
         }
     }
 }
+
+import com.monochromeroad.gradle.plugin.aws.s3.S3Sync
+
+task deploy(type: S3Sync){
+    description = "Deploys my site on a s3 bucket."
+
+    accessKey project.accessKey
+    secretKey project.secretKey
+    acl com.monochromeroad.gradle.plugin.aws.s3.ACL.PublicRead
+
+    configFile "synchronizer.properties"
+
+    from "build/repo"
+    into "anzixrepo"
+}
+
+deploy.dependsOn publish
