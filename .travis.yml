@@ -1,6 +1,12 @@
+---
 language: java
 jdk:
-  - oraclejdk7
+- oraclejdk7
 install: ./gradlew assemble
 script: ./gradlew uploadArchive
-   
+env:
+  global:
+    secure: |-
+      V5eRTeQQZZaGRB2Rw/CMKpOsM92QI1TqXupfHsL7HW0+aYKcUWsFdn5/ITIw
+      DPeoL2ECo9DjQMIhrJrsTbQrzXd4hL1kifVICAreFFUyd6L/UC6CRrThj5Uz
+      imWN56OEBDt5cafoqG5Bzwg+vcfbJ6ohknzAAmp6DSDn18uBR5I=
