@@ -5,17 +5,25 @@
             url "http://repository-monochromeroad.forge.cloudbees.com/release/"
      }
      dependencies {
-       classpath "com.monochromeroad.gradle:gradle-aws-s3-sync:0.4"
+        classpath "com.monochromeroad.gradle:gradle-aws-s3-sync:0.4"
      }
    }
 }
 
+configurations {
+    deployerJars
+}
+
+repositories {
+   mavenCentral()
+}
 apply plugin: 'groovy'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
 dependencies { 
   compile gradleApi()
   compile localGroovy()
+  deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
 }
 
 
@@ -23,33 +31,13 @@ group = "net.anzix.build"
 version = "1.0-SNAPSHOT"
 
 
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+uploadArchives {
+    repositories.mavenDeployer {
+        def configureAuth = {
+            authentication(userName: 'anzix', password: repopwd)
         }
-    }
-    repositories {
-        maven {
-            url "file://$buildDir/repo"
-        }
+        configuration = configurations.deployerJars
+        snapshotRepository(url: "dav:https://repository-anzix.forge.cloudbees.com/snapshot/", configureAuth)
+        repository(url: "dav:https://repository-anzix.forge.cloudbees.com/release/", configureAuth)
     }
 }
-
-import com.monochromeroad.gradle.plugin.aws.s3.S3Sync
-
-task deploy(type: S3Sync){
-    description = "Deploys my site on a s3 bucket."
-
-    accessKey project.accessKey
-    secretKey project.secretKey
-    acl com.monochromeroad.gradle.plugin.aws.s3.ACL.PublicRead
-
-    configFile "synchronizer.properties"
-
-    from "build/repo"
-    into "anzixrepo"
-}
-
-deploy.dependsOn publish
