@@ -41,3 +41,7 @@ uploadArchives {
         repository(url: "dav:https://repository-anzix.forge.cloudbees.com/release/", configureAuth)
     }
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
+}

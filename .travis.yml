@@ -1,2 +1,6 @@
 language: java
-  - openjdk7
+jdk:
+  - oraclejdk7
+install: ./gradlew assemble
+script: ./gradlew uploadArchive
+   
