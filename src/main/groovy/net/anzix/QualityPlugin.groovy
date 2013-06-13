@@ -9,9 +9,15 @@ import org.gradle.api.tasks.TaskState
 class QualityPlugin implements Plugin<Project> {
 
   void apply(Project project) {
+    project.apply(plugin: 'pmd')
+    project.apply(plugin: 'checkstyle')
     def checkstyle = project.file("$project.buildDir/checkstyle.xml")
     project.task('codestyleDownload') << {
 
+      def File destDir = project.file("$project.buildDir")
+      if (!destDir.exists()) {
+         destDir.mkdirs();
+      }
       if (!checkstyle.exists()) {
         project.ant.get(src: "https://raw.github.com/elek/codestyle/master/checkstyle.xml", dest: checkstyle)
       }
@@ -25,7 +31,6 @@ class QualityPlugin implements Plugin<Project> {
 
     project.gradle.taskGraph.afterTask { Task task, TaskState state ->
       if(task.name == 'checkstyleMain') {
-        println " Cleanup.............";
         if (project.file("${project.buildDir}/reports/checkstyle/main.xml").exists()) {
           project.ant.xslt(in: "${project.buildDir}/reports/checkstyle/main.xml",
           style:"${project.buildDir}/checkstyle.xsl",
