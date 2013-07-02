@@ -1,2 +1,2 @@
 #!/bin/bash
-./gradlew publish -p repoDir=/home/elek/wwwroot/zx.anzix.net/repo
+./gradlew publish -P repoDir=/home/elek/wwwroot/zx.anzix.net/repo
