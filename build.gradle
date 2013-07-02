@@ -18,7 +18,7 @@ repositories {
    mavenCentral()
 }
 apply plugin: 'groovy'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 dependencies { 
   compile gradleApi()
@@ -28,19 +28,21 @@ dependencies {
 
 
 group = "net.anzix.build"
-version = "1.0-SNAPSHOT"
+version = "1.0.1-SNAPSHOT"
 
-
-uploadArchives {
-    repositories.mavenDeployer {
-        def configureAuth = {
-            authentication(userName: 'anzix', password: repopwd)
+publishing {
+   publications {
+        mavenJava(MavenPublication) {
+            from components.java
         }
-        configuration = configurations.deployerJars
-        snapshotRepository(url: "dav:https://repository-anzix.forge.cloudbees.com/snapshot/", configureAuth)
-        repository(url: "dav:https://repository-anzix.forge.cloudbees.com/release/", configureAuth)
-    }
+   }
+   repositories {
+      maven {
+         url "file://$repoDir"
+      }
+   }
 }
+
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.6'
