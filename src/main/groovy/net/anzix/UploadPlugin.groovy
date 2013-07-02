@@ -9,27 +9,28 @@ import org.gradle.api.tasks.TaskState
 class UploadPlugin implements Plugin<Project> {
 
   void apply(Project project) {
-    project.apply(plugin: 'maven')
+    project.apply(plugin: 'maven-publish')
 
-    project.configurations {
-    deployerJars
+    if (!project.hasProperty("repoDir")) {
+      project.ext.repoDir = new File(buildDir,"/repo").getAbsolutePath()
     }
 
-project.dependencies {
-  deployerJars 'org.apache.maven.wagon:wagon-webdav:1.0-beta-2'
-}
 
-project.uploadArchives {
-    repositories.mavenDeployer {
-        def configureAuth = {
-            authentication(userName: 'anzix', password: project.repopwd)
-        }
-        configuration = project.configurations.deployerJars
-        snapshotRepository(url: "dav:https://repository-anzix.forge.cloudbees.com/snapshot/", configureAuth)
-        repository(url: "dav:https://repository-anzix.forge.cloudbees.com/release/", configureAuth)
+    project.publishing {
+     
+      publications {
+	mavenJava(MavenPublication) {
+	  from components.java
+	}
+      }
+      repositories {
+	maven {
+	  url "file://$repoDir"
+	}
+      }
     }
-}
 
+   
 
   }
 }
